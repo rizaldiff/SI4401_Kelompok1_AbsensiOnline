@@ -17,7 +17,6 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('nama_lengkap');
             $table->string('username')->unique();
-            $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->integer('role_id');
@@ -27,14 +26,14 @@ class CreateUsersTable extends Migration
             $table->string('kode_pegawai')->unique();
             $table->string('instansi');
             $table->string('jabatan');
-            $table->string('npwp');
+            $table->string('npwp')->nullable();
             $table->date('tgl_lahir');
             $table->string('tempat_lahir');
             $table->enum('jenis_kelamin', ['Laki - Laki', 'Perempuan']);
             $table->integer('bagian_shift');
             $table->integer('is_active');
             $table->integer('qr_code_use');
-            $table->timestamp('last_login');
+            $table->timestamp('last_login')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -4,7 +4,7 @@
             <dt class="col-sm-5">Nama Pegawai:</dt>
             <dd class="col-sm-7">{{ $data->nama_pegawai }}</dd>
             <dt class="col-sm-5">Tanggal Absen:</dt>
-            <dd class="col-sm-7">{{ $data->tgl_absen }}</dd>
+            <dd class="col-sm-7">{{ $data->formatted_tanggal_absen }}</dd>
             <dt class="col-sm-5">Waktu Datang:</dt>
             <dd class="col-sm-7">{{ $data->jam_masuk }}</dd>
             <dt class="col-sm-5">Waktu Pulang:</dt>
@@ -12,7 +12,7 @@
                 @if (empty($data->jam_pulang))
                     Belum Absen Pulang
                 @else
-                    $data->jam_pulang
+                    {{ $data->jam_pulang }}
                 @endif
             </dd>
             <dt class="col-sm-5">Status Kehadiran:</dt>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,11 @@ class Attendance extends Model
     public static function todayAttendance($kodePegawai)
     {
         return Attendance::where('tgl_absen', date('Y-m-d'))->where('kode_pegawai', $kodePegawai)->first();
+    }
+
+    public function getFormattedTanggalAbsenAttribute()
+    {
+        return Carbon::parse($this->tgl_absen)->translatedFormat('l, d F Y');
     }
 
     public function getFormattedStatusPegawaiAttribute()

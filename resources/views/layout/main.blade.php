@@ -577,7 +577,7 @@
     <script>
         $('#list-absensi-all').DataTable({
             "ajax": {
-                url: "http://absendigital.localdomain/ajax/get_datatbl?type=all",
+                url: "{{ route('ajax.absensi') }}",
                 type: 'get',
                 async: true,
                 "processing": true,
@@ -606,7 +606,7 @@
                 if (result.value) {
                     $.ajax({
                         type: "POST",
-                        url: 'http://absendigital.localdomain/ajax/dataabs?type=delallabs',
+                        url: '{{ route('ajax.hapusSemuaAbsensi') }}',
                         beforeSend: function() {
                             swal.fire({
                                 imageUrl: "{{ asset('assets/img/ajax-loader.gif') }}",
@@ -652,7 +652,7 @@
                 if (result.value) {
                     $.ajax({
                         type: "POST",
-                        url: 'http://absendigital.localdomain/ajax/dataabs?type=delabs',
+                        url: '{{ route('ajax.hapusAbsensi') }}',
                         data: {
                             absen_id: absen_id
                         },
@@ -690,7 +690,7 @@
             if (absen_id === '') return;
             $.ajax({
                 type: "POST",
-                url: 'http://absendigital.localdomain/ajax/dataabs?type=viewabs',
+                url: '{{ route('ajax.getDetailAbsensi') }}',
                 data: {
                     absen_id: absen_id
                 },
@@ -722,10 +722,10 @@
             if (absen_id === '') return;
             $('#printabsensimodal').on('show.bs.modal', function(e) {
                 $(this).find('.btn-print-direct').attr('href',
-                    'http://absendigital.localdomain/cetak?id_absen=' + absen_id + '');
+                    '{{ route('ajax.cetak') }}?id_absen=' + absen_id + '');
             });
             $("#printdataabsensi").html(
-                '<object type="application/pdf" data="http://absendigital.localdomain/cetak?id_absen=' +
+                '<object type="application/pdf" data="{{ route('ajax.cetak') }}?id_absen=' +
                 absen_id +
                 '" height="850" style="width: 100%; display: block;">Your browser does not support object tag</object>'
             );
@@ -735,7 +735,7 @@
     <script>
         $('#datapegawai').DataTable({
             "ajax": {
-                url: "http://absendigital.localdomain/ajax/get_datatbl?type=datapgw",
+                url: "{{ route('ajax.getPegawaiDt') }}",
                 type: 'get',
                 async: true,
                 "processing": true,
@@ -756,7 +756,7 @@
                 .attr("disabled", true);
             var formdata = new FormData(form);
             $.ajax({
-                url: "http://absendigital.localdomain/ajax/datapgw?type=addpgw",
+                url: "{{ route('ajax.storePegawai') }}",
                 type: 'POST',
                 data: formdata,
                 processData: false,
@@ -823,7 +823,7 @@
                 if (result.value) {
                     $.ajax({
                         type: "POST",
-                        url: 'http://absendigital.localdomain/ajax/datapgw?type=delpgw',
+                        url: '{{ route('ajax.deletePegawai') }}',
                         data: {
                             pgw_id: pgw_id
                         },
@@ -871,7 +871,7 @@
             if (pgw_id === '') return;
             $.ajax({
                 type: "POST",
-                url: 'http://absendigital.localdomain/ajax/datapgw?type=actpgw',
+                url: '{{ route('ajax.actPegawai') }}',
                 data: {
                     pgw_id: pgw_id
                 },
@@ -919,7 +919,7 @@
             if (pgw_id === '') return;
             $.ajax({
                 type: "POST",
-                url: 'http://absendigital.localdomain/ajax/datapgw?type=viewpgw',
+                url: '{{ route('ajax.getDetailPegawai') }}',
                 data: {
                     pgw_id: pgw_id
                 },
@@ -951,7 +951,7 @@
             if (pgw_id === '') return;
             $.ajax({
                 type: "POST",
-                url: 'http://absendigital.localdomain/ajax/datapgw?type=edtpgw',
+                url: '{{ route('ajax.editPegawai') }}',
                 data: {
                     pgw_id: pgw_id
                 },
@@ -977,11 +977,13 @@
                         ).attr("disabled", true);
                         var formdata = new FormData(form);
                         $.ajax({
-                            url: "http://absendigital.localdomain/ajax/editpgwbc?type=edtpgwalt",
+                            url: "{{ route('ajax.updatePegawai') }}",
                             type: 'POST',
                             data: formdata,
                             processData: false,
                             contentType: false,
+                            cache: false,
+                            enctype: 'multipart/form-data',
                             dataType: 'json',
                             beforeSend: function() {
                                 swal.fire({

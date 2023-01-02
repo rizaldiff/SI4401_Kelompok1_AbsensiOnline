@@ -47,7 +47,7 @@
                                     <dt class="col-sm-5">Jabatan:</dt>
                                     <dd class="col-sm-7">{{ auth()->user()->jabatan }}</dd>
                                     <dt class="col-sm-5">NPWP:</dt>
-                                    <dd class="col-sm-7">{{ auth()->user()->npwp }}</dd>
+                                    <dd class="col-sm-7">{{ auth()->user()->npwp ?: 'Tidak Ada' }}</dd>
                                     <dt class="col-sm-5">Tempat / Tanggal Lahir:</dt>
                                     <dd class="col-sm-7">{{ auth()->user()->tempat_tanggal_lahir }}</dd>
                                     <dt class="col-sm-5">Jenis Kelamin:</dt>
@@ -126,7 +126,7 @@
                         <dt class="col-sm-5">Nama Lengkap:</dt>
                         <dd class="col-sm-7">{{ auth()->user()->nama_lengkap }}</dd>
                         <dt class="col-sm-5">NPWP:</dt>
-                        <dd class="col-sm-7">{{ auth()->user()->npwp }}</dd>
+                        <dd class="col-sm-7">{{ auth()->user()->npwp ?: 'Tidak Ada' }}</dd>
                         <dt class="col-sm-5">Kode Pegawai:</dt>
                         <dd class="col-sm-7">{{ auth()->user()->kode_pegawai }}</dd>
                     </dl>

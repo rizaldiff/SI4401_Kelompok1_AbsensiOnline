@@ -40,15 +40,30 @@ class DashboardController extends Controller
 
     public function dashboard()
     {
-        $query_absensi = Attendance::where('tgl_absen', date('Y-m-d'))->get();
+        $queryAbsensi = Attendance::where('tgl_absen', date('Y-m-d'))->get();
 
         $data = [
             'appdata' => $this->appdata,
             'jmlpegawai' => User::count(),
-            'pegawaitelat' => $query_absensi->where('status_pegawai', 2)->count(),
-            'pegawaimasuk' => $query_absensi->where('status_pegawai', 1)->count()
+            'pegawaitelat' => $queryAbsensi->where('status_pegawai', 2)->count(),
+            'pegawaimasuk' => $queryAbsensi->where('status_pegawai', 1)->count()
         ];
 
         return view('admin.dashboard', $data);
+    }
+
+    public function dataPegawai()
+    {
+        $data = [
+            'appdata' => $this->appdata,
+            'pegawai' => User::all(),
+        ];
+
+        return view('admin.data-pegawai', $data);
+    }
+
+    public function absensi()
+    {
+        return view('admin.absen-pegawai');
     }
 }

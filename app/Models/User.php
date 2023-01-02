@@ -20,7 +20,6 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
         'password',
     ];
 
@@ -66,5 +65,50 @@ class User extends Authenticatable
     public function getAkunDibuatAttribute()
     {
         return Carbon::parse($this->created_at)->translatedFormat('d F Y');
+    }
+
+    public function getLevelAttribute()
+    {
+        switch ($this->role_id) {
+            case 1:
+                return '<span class="badge badge-danger">Administrator</span>';
+                break;
+            case 2:
+                return '<span class="badge badge-primary">Pegawai</span>';
+                break;
+            default:
+                return '<span class="badge badge-dark">Unknown</span>';
+                break;
+        }
+    }
+
+    public function getShiftAttribute()
+    {
+        switch ($this->bagian_shift) {
+            case 1:
+                return '<span class="badge badge-success">Full Time</span>';
+                break;
+            case 2:
+                return '<span class="badge badge-warning">Part Time</span>';
+                break;
+            default:
+                return '<span class="badge badge-primary">Shift</span>';
+                break;
+        }
+    }
+
+    public function getVerificationAttribute()
+    {
+        switch ($this->is_active) {
+            case 1:
+                return '<span class="badge badge-success">Terverifikasi</span>';
+                break;
+            case 0:
+                return '<span class="badge badge-danger">Belum Terverifikasi</span>';
+                break;
+            default:
+                return '<span class="badge badge-dark">Unknown</span>';
+                break;
+        }
     }
 }

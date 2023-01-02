@@ -18,7 +18,6 @@ class UserSeeder extends Seeder
         \App\Models\User::create([
             'nama_lengkap' => 'Admin',
             'username' => 'admin',
-            'email' => 'admin@mail.com',
             'password' => Hash::make('12345678'),
             'role_id' => 1,
             'umur' => 20,
@@ -27,7 +26,7 @@ class UserSeeder extends Seeder
             'kode_pegawai' => '293571010111',
             'instansi' => '[Ubah Nama Instansi]',
             'jabatan' => 'Test',
-            'npwp' => 'Tidak Ada',
+            'npwp' => '',
             'tgl_lahir' => '2020-10-10',
             'tempat_lahir' => 'Test',
             'jenis_kelamin' => 'Laki - Laki',

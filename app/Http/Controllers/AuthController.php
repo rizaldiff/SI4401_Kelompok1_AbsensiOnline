@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -34,26 +36,43 @@ class AuthController extends Controller
         if (auth()->attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/');
+            if (auth()->user()->is_active) {
+                $user = User::where('username', $request->username)->first();
+                $user->last_login = Carbon::now();
+                $user->save();
+
+                return redirect()->intended('/');
+            } else {
+                $this->doLogout($request);
+
+                return back()->withInput()->withErrors([
+                    'login' => 'Akun Ini Belum Aktif, Silakan Hubungi Pihak Administrator!',
+                ]);
+            }
         }
 
-        return back()->withErrors([
+        return back()->withInput()->withErrors([
             'login' => 'Password Atau Username Salah!',
         ]);
     }
 
     public function logout(Request $request)
     {
-        auth()->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
+        $this->doLogout($request);
 
         $reponse = [
             'success' => true
         ];
 
         return json_encode($reponse);
+    }
+
+    public function doLogout(Request $request)
+    {
+        auth()->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
     }
 }
