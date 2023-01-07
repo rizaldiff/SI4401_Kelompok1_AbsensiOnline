@@ -26,15 +26,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/', [DashboardController::class, 'index'])->name('index');
-    Route::get('/profile', [DashboardController::class, 'index'])->name('profile');
-    Route::get('/setting', [DashboardController::class, 'index'])->name('setting');
-    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+    Route::get('/setting', [UserController::class, 'setting'])->name('setting');
     Route::get('/absensiku', [UserController::class, 'absensiku'])->name('absensiku');
-    Route::get('/datapegawai', [DashboardController::class, 'dataPegawai'])->name('datapegawai');
-    Route::get('/absensi', [DashboardController::class, 'absensi'])->name('absensi');
-    Route::get('/settingapp', [DashboardController::class, 'index'])->name('settingapp');
-    Route::get('/export', [DocsController::class, 'export'])->name('export');
-    Route::post('/export', [DocsController::class, 'exportAbsensi']);
+
+    Route::middleware('admin')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+        Route::get('/datapegawai', [DashboardController::class, 'dataPegawai'])->name('datapegawai');
+        Route::get('/absensi', [DashboardController::class, 'absensi'])->name('absensi');
+        Route::get('/settingapp', [DashboardController::class, 'settings'])->name('settingapp');
+        Route::get('/export', [DocsController::class, 'export'])->name('export');
+        Route::post('/export', [DocsController::class, 'exportAbsensi']);
+    });
 
     Route::prefix('ajax')->group(function () {
         Route::post('absenajax', [AjaxController::class, 'absenajax'])->name('ajax.absenajax');
@@ -53,5 +56,12 @@ Route::middleware('auth')->group(function () {
         Route::get('cetak', [DocsController::class, 'cetak'])->name('ajax.cetak');
         Route::post('hapus_absensi', [AjaxController::class, 'hapusAbsensi'])->name('ajax.hapusAbsensi');
         Route::post('hapus_semua_absensi', [AjaxController::class, 'hapusSemuaAbsensi'])->name('ajax.hapusSemuaAbsensi');
+
+        Route::post('init_settings', [AjaxController::class, 'initSettings'])->name('ajax.initSettings');
+        Route::post('update_settings', [AjaxController::class, 'updateSettings'])->name('ajax.updateSettings');
+        Route::post('clear_rememberme_all', [AjaxController::class, 'clearRememberMeAll'])->name('ajax.clearRememberMeAll');
+        Route::post('clear_rememberme', [AjaxController::class, 'clearRememberMe'])->name('ajax.clearRememberMe');
+        Route::post('change_password', [AjaxController::class, 'changePassword'])->name('ajax.changePassword');
+        Route::post('change_profile', [AjaxController::class, 'changeProfile'])->name('ajax.changeProfile');
     });
 });

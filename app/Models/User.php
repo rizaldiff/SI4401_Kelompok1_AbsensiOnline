@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use function PHPUnit\Framework\isNull;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -110,5 +112,18 @@ class User extends Authenticatable
                 return '<span class="badge badge-dark">Unknown</span>';
                 break;
         }
+    }
+
+    public function getDivisiAttribute($value)
+    {
+        if ($value == null) {
+            return 'Tidak Ada';
+        }
+        return $value;
+    }
+
+    public function attendance()
+    {
+        return $this->belongsTo(Attendance::class);
     }
 }

@@ -12,10 +12,12 @@
         "carlos-meneses/laravel-mpdf": "^2.1",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "hisorange/browser-detect": "^4.5",
         "intervention/image": "^2.7",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
+        "laraveldaily/laravel-charts": "^0.1.29",
         "maatwebsite/excel": "^3.1",
         "simplesoftwareio/simple-qrcode": "~4"
     },

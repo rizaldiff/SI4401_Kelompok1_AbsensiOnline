@@ -41,7 +41,7 @@ class AuthController extends Controller
                 $user->last_login = Carbon::now();
                 $user->save();
 
-                return redirect()->intended('/');
+                return redirect()->route('index');
             } else {
                 $this->doLogout($request);
 

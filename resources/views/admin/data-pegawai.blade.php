@@ -96,6 +96,17 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label for="divisi" class="col-sm-4 col-form-label">Divisi</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="divisi" name="divisi">
+                                    <option>Pilih Divisi</option>
+                                    <option value="Keuangan">Keuangan</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Sales">Sales</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label for="instansi_pegawai" class="col-sm-4 col-form-label">Instansi</label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="instansi_pegawai" name="instansi_pegawai"

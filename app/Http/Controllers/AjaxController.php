@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Session;
 use App\Models\Setting;
 use App\Models\User;
 use Carbon\Carbon;
@@ -232,6 +233,7 @@ class AjaxController extends Controller
                 'username_pegawai_edit' => 'required|string|unique:users,username,'.$request->id_pegawai_edit,
                 'password_pegawai_edit' => 'nullable|string|min:8',
                 'jabatan_pegawai_edit' => 'required|string',
+                'divisi_pegawai_edit' => 'required|in:Keuangan,Marketing,Sales',
                 'npwp_pegawai_edit' => 'nullable|numeric',
                 'umur_pegawai_edit' => 'required|numeric|min:1',
                 'tempat_lahir_pegawai_edit' => 'required|string',
@@ -247,6 +249,7 @@ class AjaxController extends Controller
                 'username_pegawai_edit' => 'username pegawai',
                 'password_pegawai_edit' => 'password pegawai',
                 'jabatan_pegawai_edit' => 'jabatan pegawai',
+                'divisi_pegawai_edit' => 'divisi pegawai',
                 'npwp_pegawai_edit' => 'npwp pegawai',
                 'umur_pegawai_edit' => 'umur pegawai',
                 'tempat_lahir_pegawai_edit' => 'tempat lahir pegawai',
@@ -280,6 +283,7 @@ class AjaxController extends Controller
                 $user->password = Hash::make($request->password_pegawai_edit);
             }
             $user->jabatan = $request->jabatan_pegawai_edit;
+            $user->divisi = $request->divisi_pegawai_edit;
             $user->npwp = $request->npwp_pegawai_edit;
             $user->umur = $request->umur_pegawai_edit;
             $user->tempat_lahir = $request->tempat_lahir_pegawai_edit;
@@ -339,6 +343,7 @@ class AjaxController extends Controller
                 'username_pegawai' => 'required|string|unique:users,username',
                 'password_pegawai' => 'required|string|min:8',
                 'jabatan_pegawai' => 'required|string',
+                'divisi' => 'required|in:Keuangan,Marketing,Sales',
                 'npwp_pegawai' => 'nullable|numeric',
                 'umur_pegawai' => 'required|numeric|min:1',
                 'tempat_lahir_pegawai' => 'required|string',
@@ -354,6 +359,7 @@ class AjaxController extends Controller
                 'username_pegawai_edit' => 'username pegawai',
                 'password_pegawai_edit' => 'password pegawai',
                 'jabatan_pegawai_edit' => 'jabatan pegawai',
+                'divisi' => 'divisi pegawai',
                 'npwp_pegawai_edit' => 'npwp pegawai',
                 'umur_pegawai_edit' => 'umur pegawai',
                 'tempat_lahir_pegawai_edit' => 'tempat lahir pegawai',
@@ -385,6 +391,7 @@ class AjaxController extends Controller
             $user->username = $request->username_pegawai;
             $user->password = Hash::make($request->password_pegawai);
             $user->jabatan = $request->jabatan_pegawai;
+            $user->divisi = $request->divisi;
             $user->npwp = $request->npwp_pegawai;
             $user->umur = $request->umur_pegawai;
             $user->instansi = config('settings.nama_instansi');
@@ -480,7 +487,14 @@ class AjaxController extends Controller
         $draw = intval($request->draw);
         $data = [];
 
-        $query = Attendance::orderBy('tgl_absen', 'DESC')->get();
+        if ($request->divisi != '') {
+            $divisi = $request->divisi;
+            $query = Attendance::whereHas('user', function ($query) use ($divisi) {
+                $query->where('divisi', $divisi);
+            })->orderBy('tgl_absen', 'DESC')->get();
+        } else {
+            $query = Attendance::orderBy('tgl_absen', 'DESC')->get();
+        }
 
         foreach ($query as $key => $value) {
             $data[] = array(
@@ -539,6 +553,187 @@ class AjaxController extends Controller
                 'message' => 'Absensi berhasil dihapus!'
             ];
         }
+
+        return response()->json($response);
+    }
+
+    public function initSettings(Request $request)
+    {
+        $setting = Setting::find(1);
+        $setting->nama_instansi = '[Ubah Nama Instansi]';
+        $setting->jumbotron_lead_set = '[Ubah Text Berjalan Halaman Depan Disini Pada Setting Aplikasi]';
+        $setting->nama_app_absensi = 'Absensi Online';
+        if ($setting->logo_instansi != 'storage/settings/default-logo.png') {
+            unlink($setting->logo_instansi);
+        }
+        $setting->logo_instansi = 'storage/settings/default-logo.png';
+        $setting->timezone = 'Asia/Jakarta';
+        $setting->absen_mulai = '06:00:00';
+        $setting->absen_mulai_to = '11:00:00';
+        $setting->absen_pulang = '16:00:00';
+        $setting->map_use = 0;
+        $setting->save();
+
+        User::query()->update(['instansi' => $setting->nama_instansi]);
+
+        $response = [
+            'success' => true,
+            'message' => 'Berhasil mengembalikan pengaturan aplikasi ke default!'
+        ];
+
+        return response()->json($response);
+    }
+
+    public function updateSettings(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nama_instansi' => 'required|string',
+            'pesan_jumbotron' => 'required|string',
+            'nama_app_absen' => 'required|string|max:20',
+            'timezone_absen' => 'required|string',
+            'absen_mulai' => 'required|date_format:H:i:s',
+            'absen_sampai' => 'required|date_format:H:i:s',
+            'absen_pulang_sampai' => 'required|date_format:H:i:s',
+            'logo_instansi' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'lokasi_absensi' => 'nullable'
+        ]);
+
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'messages' => $validator->errors()
+            ];
+
+            return response()->json($response);
+        }
+
+        $setting = Setting::find(1);
+        $setting->nama_instansi = $request->nama_instansi;
+        $setting->jumbotron_lead_set = $request->pesan_jumbotron;
+        $setting->nama_app_absensi = $request->nama_app_absen;
+
+        if ($request->hasFile('logo_instansi')) {
+            if ($setting->logo_instansi != 'storage/settings/default-logo.png') {
+                unlink($setting->logo_instansi);
+            }
+            $filename = $request->file('logo_instansi')->store('settings', 'public');
+            $setting->logo_instansi = 'storage/'.$filename;
+        }
+
+        $setting->timezone = $request->timezone_absen;
+        $setting->absen_mulai = $request->absen_mulai;
+        $setting->absen_mulai_to = $request->absen_sampai;
+        $setting->absen_pulang = $request->absen_pulang_sampai;
+        $setting->map_use = $request->lokasi_absensi ? 1 : 0;
+        $setting->save();
+
+        User::query()->update(['instansi' => $setting->nama_instansi]);
+
+        $response = [
+            'success' => true,
+            'message' => 'Berhasil mengubah pengaturan aplikasi!'
+        ];
+
+        return response()->json($response);
+    }
+
+    public function clearRememberMeAll(Request $request)
+    {
+        Session::where('id', '!=', $request->session()->getId())->delete();
+
+        $response = [
+            'success' => true,
+            'message' => 'Berhasil menghapus semua sesi!'
+        ];
+
+        return response()->json($response);
+    }
+
+    public function clearRememberMe(Request $request)
+    {
+        $session = Session::where('id', $request->sess_id);
+        $session->delete();
+
+        $response = [
+            'success' => true,
+            'message' => 'Berhasil menghapus sesi!'
+        ];
+
+        return response()->json($response);
+    }
+
+    public function changePassword(Request $request)
+    {
+        // old password, and new password confirmed
+        $validator = Validator::make($request->all(), [
+            'pass_lama' => 'required|string',
+            'password' => 'required|string|min:8|confirmed'
+        ]);
+
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'messages' => $validator->errors()
+            ];
+
+            return response()->json($response);
+        }
+
+        $user = User::find(Auth::user()->id);
+
+        if (Hash::check($request->pass_lama, $user->password)) {
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            $response = [
+                'success' => true,
+                'message' => 'Berhasil mengubah password!'
+            ];
+        } else {
+            $response = [
+                'success' => false,
+                'infopass' => '<div class="alert alert-danger text-center" role="alert">Password lama salah</div>'
+            ];
+        }
+
+        return response()->json($response);
+    }
+
+    public function changeProfile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'umur_pegawai' => 'required|integer|digits_between:1,2|min:1',
+            'npwp_pegawai' => 'nullable|string',
+            'pas_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ]);
+
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'messages' => $validator->errors()
+            ];
+
+            return response()->json($response);
+        }
+
+        $user = User::find(Auth::user()->id);
+        $user->umur = $request->umur_pegawai;
+        $user->npwp = $request->npwp_pegawai;
+
+        if ($request->hasFile('pas_foto')) {
+            if ($user->image != 'storage/profiles/default.jpg') {
+                unlink($user->image);
+            }
+            $filename = $request->file('pas_foto')->store('profiles', 'public');
+            $user->image = 'storage/'.$filename;
+        }
+
+        $user->save();
+
+        $response = [
+            'success' => true,
+            'message' => 'Berhasil mengubah profil!'
+        ];
 
         return response()->json($response);
     }

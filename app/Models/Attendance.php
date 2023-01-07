@@ -21,6 +21,11 @@ class Attendance extends Model
         'maps_absen',
     ];
 
+    public function user()
+    {
+        return $this->hasOne(User::class, 'kode_pegawai', 'kode_pegawai');
+    }
+
     public static function todayAttendance($kodePegawai)
     {
         return Attendance::where('tgl_absen', date('Y-m-d'))->where('kode_pegawai', $kodePegawai)->first();

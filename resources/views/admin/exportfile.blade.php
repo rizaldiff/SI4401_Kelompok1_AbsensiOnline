@@ -40,7 +40,7 @@
                                 <label for="method_export_file" class="col-sm-4 col-form-label">Metode Export Data</label>
                                 <div class="col-sm-8">
                                     <select name="method_export_file" class="form-control" id="method_export_file">
-                                        <option value="pdf">Files PDF</option>
+                                        {{-- <option value="pdf">Files PDF</option> --}}
                                         <option value="excel">Files Excel</option>
                                     </select>
                                 </div>

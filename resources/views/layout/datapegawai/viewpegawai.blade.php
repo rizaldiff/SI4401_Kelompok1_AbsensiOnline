@@ -12,6 +12,8 @@
             </dd>
             <dt class="col-sm-5">Instansi:</dt>
             <dd class="col-sm-7 text-truncate">{{ $data->instansi }}</dd>
+            <dt class="col-sm-5">Divisi</dt>
+            <dd class="col-sm-7">{{ $data->divisi ?: 'Tidak Ada' }}</dd>
             <dt class="col-sm-5">Jabatan:</dt>
             <dd class="col-sm-7">{{ $data->jabatan }}</dd>
             <dt class="col-sm-5">NPWP:</dt>

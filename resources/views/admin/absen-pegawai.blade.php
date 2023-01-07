@@ -5,9 +5,18 @@
         <h1 class="my-4"><span class="fas fa-user-check mr-2"></span>Absensi Pegawai</h1>
         <div class="card">
             <div class="card-header">
+                <div class="float-left d-inline">
+                    <select class="form-control" id="filter-divisi">
+                        <option value="">Semua Divisi</option>
+                        <option value="Keuangan">Keuangan</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Sales">Sales</option>
+                    </select>
+                </div>
                 <div class="float-right d-inline">
                     @if (auth()->user()->role_id == 1)
-                        <div class="btn btn-danger" id="clear-absensi"><span class="fas fa-trash mr-1"></span>Clear All</div>
+                        <div class="btn btn-danger" id="clear-absensi"><span class="fas fa-trash mr-1"></span>Clear All
+                        </div>
                     @endif
                     <a class="btn btn-success" href="{{ route('export') }}"><span class="fas fa-file mr-1"></span>Export
                         Absensi</a>

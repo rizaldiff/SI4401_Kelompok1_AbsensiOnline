@@ -274,234 +274,6 @@
             });
         });
     </script>
-
-    <!--Bagian Setting User-->
-    <script>
-        $("#clear_rememberme").click(function(e) {
-            Swal.fire({
-                title: 'Hapus Semua Remember Me?',
-                text: "Anda yakin ingin menghapus semua sesi remember me anda!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Hapus!'
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        type: "POST",
-                        url: "http://absendigital.localdomain/ajax/clear_rememberme?rmbtype=all",
-                        beforeSend: function() {
-                            swal.fire({
-                                imageUrl: "{{ asset('assets/img/ajax-loader.gif') }}",
-                                title: "Menghapus Semua Remember Me Anda",
-                                text: "Please wait",
-                                showConfirmButton: false,
-                                allowOutsideClick: false
-                            });
-                        },
-                        success: function(data) {
-                            swal.fire({
-                                icon: 'success',
-                                title: 'Menghapus Semua Remember Me Berhasil',
-                                text: 'List remember me anda telah di hapus!',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                            $('#remembersesslist').load(location.href + " #remembersesslist");
-                        }
-                    });
-                }
-            })
-            e.preventDefault();
-        });
-
-        $(".sess_rememberme").click(function(e) {
-            e.preventDefault();
-            var sess_id = $(e.currentTarget).attr('data-sess-id');
-            if (sess_id === '') return;
-            Swal.fire({
-                title: 'Hapus Sesi Remember Me Ini?',
-                text: "Anda yakin ingin menghapus sesi di perangkat ini!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Hapus!'
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        type: "POST",
-                        url: 'http://absendigital.localdomain/ajax/clear_rememberme?rmbtype=self',
-                        data: {
-                            sess_id: sess_id
-                        },
-                        beforeSend: function() {
-                            swal.fire({
-                                imageUrl: "{{ asset('assets/img/ajax-loader.gif') }}",
-                                title: "Menghapus Sesi Perangkat Ini",
-                                text: "Please wait",
-                                showConfirmButton: false,
-                                allowOutsideClick: false
-                            });
-                        },
-                        success: function(data) {
-                            swal.fire({
-                                icon: 'success',
-                                title: 'Menghapus Sesi Perangkat Ini Berhasil',
-                                text: 'Anda telah menghapus sesi pada perangat ini!',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                            $(e.currentTarget).parent().remove();
-                        }
-                    });
-                }
-            })
-        });
-    </script>
-    <script>
-        $('#chgpassuser').submit(function(e) {
-            e.preventDefault();
-            var form = this;
-            $("#chgpass-btn").html(
-                    "<span class='fas fa-spinner fa-pulse' aria-hidden='true' title=''></span> Mengganti Password")
-                .attr("disabled", true);
-            var formdata = new FormData(form);
-            $.ajax({
-                url: "http://absendigital.localdomain/ajax/usersetting?type=chgpwd",
-                type: 'POST',
-                data: formdata,
-                processData: false,
-                contentType: false,
-                dataType: 'json',
-                beforeSend: function() {
-                    $('.text-danger').remove();
-                    $("#infopass").hide();
-                    swal.fire({
-                        imageUrl: "{{ asset('assets/img/ajax-loader.gif') }}",
-                        title: "Mengubah Password",
-                        text: "Please wait",
-                        showConfirmButton: false,
-                        allowOutsideClick: false
-                    });
-                },
-                success: function(response) {
-                    if (response.success == true) {
-                        $('.text-danger').remove();
-                        swal.fire({
-                            icon: 'success',
-                            title: 'Ubah Password Berhasil',
-                            text: 'Password anda sudah diubah!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                        form.reset();
-                        $("#chgpass-btn").html(
-                            "<span class='fas fa-key mr-1' aria-hidden='true' ></span>Ubah Password"
-                        ).attr("disabled", false);
-                    } else {
-                        swal.close()
-                        $("#infopass").html(response.infopass).show();
-                        swal.fire({
-                            icon: 'error',
-                            title: 'Ubah Password Gagal',
-                            text: 'Password anda gagal diubah!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                        $("#chgpass-btn").html(
-                            "<span class='fas fa-key mr-1' aria-hidden='true' ></span>Ubah Password"
-                        ).attr("disabled", false);
-                        $.each(response.messages, function(key, value) {
-                            var element = $('#' + key);
-                            element.closest('div.form-group')
-                                .find('.text-danger')
-                                .remove();
-                            if (element.parent('.input-group').length) {
-                                element.parent().after(value);
-                            } else {
-                                element.after(value);
-                            }
-                        });
-                    }
-                },
-                error: function() {
-                    swal.fire("Ubah Password", "Ada Kesalahan Saat pengubahan password!", "error");
-                    $("#chgpass-btn").html(
-                        "<span class='fas fa-pen mr-1' aria-hidden='true' ></span>Edit").attr(
-                        "disabled", false);
-                }
-            });
-
-        });
-
-        $('#settinguser').submit(function(e) {
-            e.preventDefault();
-            var form = this;
-            $("#usrsetting-btn").html(
-                "<span class='fas fa-spinner fa-pulse' aria-hidden='true' title=''></span> Mengubah Data").attr(
-                "disabled", true);
-            var formdata = new FormData(form);
-            $.ajax({
-                url: "http://absendigital.localdomain/ajax/usersetting?type=basic",
-                type: 'POST',
-                data: formdata,
-                processData: false,
-                contentType: false,
-                dataType: 'json',
-                beforeSend: function() {
-                    swal.fire({
-                        imageUrl: "{{ asset('assets/img/ajax-loader.gif') }}",
-                        title: "Mengubah Data",
-                        text: "Please wait",
-                        showConfirmButton: false,
-                        allowOutsideClick: false
-                    });
-                },
-                success: function(response) {
-                    if (response.success == true) {
-                        $('.text-danger').remove();
-                        swal.fire({
-                            icon: 'success',
-                            title: 'Ubah Profil Berhasil',
-                            text: 'Profil anda sudah diubah!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                        location.reload();
-                        $("#usrsetting-btn").html(
-                            "<span class='fas fa-pen mr-1' aria-hidden='true' ></span>Edit").attr(
-                            "disabled", false);
-                    } else {
-                        swal.close()
-                        $("#usrsetting-btn").html(
-                            "<span class='fas fa-pen mr-1' aria-hidden='true' ></span>Edit").attr(
-                            "disabled", false);
-                        $.each(response.messages, function(key, value) {
-                            var element = $('#' + key);
-                            element.closest('div.form-group')
-                                .find('.text-danger')
-                                .remove();
-                            if (element.parent('.input-group').length) {
-                                element.parent().after(value);
-                            } else {
-                                element.after(value);
-                            }
-                        });
-                    }
-                },
-                error: function() {
-                    swal.fire("Mengubah Profil Gagal", "Ada Kesalahan Saat pengubahan profil!",
-                        "error");
-                    $("#usrsetting-btn").html(
-                        "<span class='fas fa-pen mr-1' aria-hidden='true' ></span>Edit").attr(
-                        "disabled", false);
-                }
-            });
-
-        });
-    </script>
     <script>
         $("#refresh-tabel-absensi").click(function(e) {
             e.preventDefault();
@@ -575,11 +347,19 @@
         });
     </script>
     <script>
+        var divisi = $('#filter-divisi').val();
+        $("#filter-divisi").change(function(e) {
+            e.preventDefault();
+            load_process();
+            divisi = $('#filter-divisi').val();
+            $('#list-absensi-all').DataTable().ajax.url('/ajax/absensi?divisi=' + divisi).load();
+        });
         $('#list-absensi-all').DataTable({
             "ajax": {
                 url: "{{ route('ajax.absensi') }}",
                 type: 'get',
                 async: true,
+                cache: false,
                 "processing": true,
                 "serverSide": true,
                 dataType: 'json',
@@ -1058,7 +838,7 @@
                 if (result.value) {
                     $.ajax({
                         type: "POST",
-                        url: "http://absendigital.localdomain/ajax/initsettingapp?type=1",
+                        url: "{{ route('ajax.initSettings') }}",
                         beforeSend: function() {
                             swal.fire({
                                 imageUrl: "{{ asset('assets/img/ajax-loader.gif') }}",
@@ -1107,7 +887,7 @@
                 "disabled", true);
             var formdata = new FormData(this);
             $.ajax({
-                url: "http://absendigital.localdomain/ajax/savingsettingapp",
+                url: "{{ route('ajax.updateSettings') }}",
                 type: 'POST',
                 data: formdata,
                 processData: false,
@@ -1151,7 +931,8 @@
                             if (element.parent('.input-group').length) {
                                 element.parent().after(value);
                             } else {
-                                element.after(value);
+                                element.after('<p class="text-danger mb-0">' + value +
+                                    '</p>');
                             }
                         });
                     }
@@ -1166,6 +947,7 @@
 
         });
     </script>
+    @yield('script')
 </body>
 
 </html>

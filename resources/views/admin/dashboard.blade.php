@@ -63,6 +63,38 @@
                     </div>
                 </div>
             </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card text-dark mb-4">
+                    <div class="card-body">
+                        <h4><span class="fas fa-user-tie mr-2"></span>Pegawai by Divisi</h4>
+                        <canvas id="chartPegawai"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card text-dark mb-4">
+                    <div class="card-body">
+                        <h4><span class="fas fa-user-clock mr-2"></span>Absensi Keuangan</h4>
+                        <canvas id="chartAbsensiKeuangan"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card text-dark mb-4">
+                    <div class="card-body">
+                        <h4><span class="fas fa-user-clock mr-2"></span>Absensi Marketing</h4>
+                        <canvas id="chartAbsensiMarketing"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card text-dark mb-4">
+                    <div class="card-body">
+                        <h4><span class="fas fa-user-clock mr-2"></span>Absensi Sales</h4>
+                        <canvas id="chartAbsensiSales"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-xl-6">
@@ -129,4 +161,112 @@
             </div>
         </div>
     </div>
+@endsection
+@section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.1.2/chart.umd.js"
+        integrity="sha512-t41WshQCxr9T3SWH3DBZoDnAT9gfVLtQS+NKO60fdAwScoB37rXtdxT/oKe986G0BFnP4mtGzXxuYpHrMoMJLA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        new Chart(
+            document.getElementById('chartPegawai'), {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Tidak Ada',
+                        'Keuangan',
+                        'Marketing',
+                        'Sales'
+                    ],
+                    datasets: [{
+                        label: 'Pegawai by Divisi',
+                        data: [
+                            @foreach ($dataChartPegawai as $data)
+                                {{ $data ?: 0 }},
+                            @endforeach
+                        ],
+                        backgroundColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 205, 86)',
+                            'rgb(75, 192, 192)'
+                        ],
+                        hoverOffset: 4
+                    }]
+                }
+            }
+        );
+        new Chart(
+            document.getElementById('chartAbsensiSales'), {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Tepat Waktu',
+                        'Terlambat',
+                    ],
+                    datasets: [{
+                        label: 'Absensi Divisi Sales',
+                        data: [
+                            @foreach ($dataChartAbsensiSales as $data)
+                                {{ $data ?: 0 }},
+                            @endforeach
+                        ],
+                        backgroundColor: [
+                            'rgb(156, 204, 101)',
+                            'rgb(236, 64, 122)',
+                        ],
+                        hoverOffset: 4
+                    }]
+                }
+            }
+        );
+        new Chart(
+            document.getElementById('chartAbsensiKeuangan'), {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Tepat Waktu',
+                        'Terlambat',
+                    ],
+                    datasets: [{
+                        label: 'Absensi Divisi Keuangan',
+                        data: [
+                            @foreach ($dataChartAbsensiKeuangan as $data)
+                                {{ $data ?: 0 }},
+                            @endforeach
+                        ],
+                        backgroundColor: [
+                            'rgb(156, 204, 101)',
+                            'rgb(236, 64, 122)',
+                        ],
+                        hoverOffset: 4
+                    }]
+                }
+            }
+        );
+        new Chart(
+            document.getElementById('chartAbsensiMarketing'), {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Tepat Waktu',
+                        'Terlambat',
+                    ],
+                    datasets: [{
+                        label: 'Absensi Divisi Marketing',
+                        data: [
+                            @foreach ($dataChartAbsensiMarketing as $data)
+                                {{ $data ?: 0 }},
+                            @endforeach
+                        ],
+                        backgroundColor: [
+                            'rgb(156, 204, 101)',
+                            'rgb(236, 64, 122)',
+                        ],
+                        hoverOffset: 4
+                    }]
+                }
+            }
+        );
+    </script>
+
 @endsection
